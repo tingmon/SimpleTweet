@@ -1,5 +1,7 @@
 import { dbService, storageService } from "fbase";
 import react, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 
 const Tweet = ({tweetObject, isOwner}) => {
     const [editing, setEditing] = useState(false);
@@ -33,37 +35,43 @@ const Tweet = ({tweetObject, isOwner}) => {
         // go to your firestore, you can see the location
         // ex) /tweets/6x3GyJ3AnvvxmwsClP2t
         dbService.doc(`tweets/${tweetObject.id}`).update({
-            text:newTweet
+            text: newTweet
         })
         setEditing(false);
     }
     console.log("is owner:" + isOwner)
 
     return (
-        <div>
+        <div className="nweet">
             {
                 editing ? 
                 <>
                     {isOwner && <>
-                        <form onSubmit={onSubmit}>
-                            <input onChange={onChange} type="text" value={newTweet} required></input>
-                            <input type="submit" value="Update"></input>
+                        <form onSubmit={onSubmit} className="container nweetEdit">
+                            <input onChange={onChange} type="text" value={newTweet} required autoFocus className="formInput"></input>
+                            <input type="submit" value="Update Tweet" className="formBtn" />
                         </form> 
-                        <button onClick={toggleEditing}>Cancel</button>
+                        <span onClick={toggleEditing} className="formBtn cancelBtn">
+                            Cancel
+                        </span>
                     </>}
                 </>
                 :
                 <>
                     <h4>{tweetObject.text}</h4>
-                    {tweetObject.imgFfileUrl && <img src={tweetObject.imgFfileUrl} width="50px" height="50px" alt="imageaa"></img>}
-                    {isOwner && <>
-                        <button onClick={onDeleteClick}>Delete Tweet</button>
-                        <button onClick={toggleEditing}>Edit Tweet</button>
-                    </>}
+                    {tweetObject.imgFileUrl && <img alt="attached file" src={tweetObject.imgFileUrl} />}
+                    {isOwner && (
+                        <div className="nweet__actions">
+                            <span onClick={onDeleteClick}>
+                                <FontAwesomeIcon icon={faTrash} />
+                            </span>
+                            <span onClick={toggleEditing}>
+                                <FontAwesomeIcon icon={faPencilAlt} />
+                            </span>
+                        </div>
+                    )}
                 </>
-
             }
-
         </div>
     );
 }

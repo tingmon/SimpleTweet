@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const Profile = ({userObject, refreshUser}) => {
     const history = useHistory();
     const [newDisplayName, setNewDisplayName] = useState(userObject.displayName);
+    const [newPhotoURL, setNewPhotoURL] = useState(userObject.photoURL);
     
     const onLogOutClick = () => {
         authService.signOut();
@@ -27,6 +28,14 @@ const Profile = ({userObject, refreshUser}) => {
             await userObject.updateProfile({
                 displayName: newDisplayName,
             });
+            console.log(userObject)
+            refreshUser();
+        }
+        if(userObject.photoURL !== newPhotoURL){
+            await userObject.updateProfile({
+                displayName: newDisplayName,
+            });
+            console.log(userObject)
             refreshUser();
         }
     }
@@ -37,13 +46,20 @@ const Profile = ({userObject, refreshUser}) => {
     }
     
     return (
-        <>
-            <form onSubmit={onSubmit}>
-                <input onChange={onChange} type="text" placeholder="Change your name" value={newDisplayName}/>
-                <input type="submit" value="Update profile"/>
+        <div className="container">
+            <form onSubmit={onSubmit} className="profileForm">
+                <input onChange={onChange} type="text" placeholder="Change your name" value={newDisplayName} className="formInput" autoFocus/>
+                <input type="submit" value="Update user name" className="formBtn" style={{
+                    marginTop: 10,
+                }}/>
+                <input type="submit" value="Update profile photo" className="formBtn" style={{
+                    marginTop: 10,
+                }}/>
             </form>
-            <button onClick={onLogOutClick}>Log Out</button>
-        </>
+            <span className="formBtn cancelBtn logOut" onClick={onLogOutClick}>
+                Log Out
+            </span>
+        </div>
     )
 }
 export default Profile;

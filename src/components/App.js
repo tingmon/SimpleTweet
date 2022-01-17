@@ -47,7 +47,14 @@ function App() {
   return (
     <>
       {init ? <AppRouter refreshUser={refreshUser} isLoggedIn={Boolean(userObject)} userObject={userObject}></AppRouter> : "Please Wait..."}
-      <footer>&copy; {new Date().getFullYear()} Simple Tweet </footer>
+      <footer style={{
+                        maxWidth: 890,
+                        width: "100%",
+                        margin: "0 auto",
+                        marginTop: 80,
+                        display: "flex",
+                        justifyContent: "center",
+                        }}>&copy; {new Date().getFullYear()} Simple Tweet </footer>
     </>
   );
 }

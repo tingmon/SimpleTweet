@@ -1,13 +1,18 @@
 import { dbService, storageService } from "fbase";
 import react, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const TweetFactory = ({userObject}) =>{
     const [tweet, setTweet] = useState("");
     const [img, setImg] = useState("");
     const onSubmit = async (event) => {
+        if (tweet === "") {
+            return;
+          }
         event.preventDefault();
-        let imgFfileUrl = "";
+        let imgFileUrl = "";
         if(img !== ""){
             // ref(): Returns a reference for the given path in the default bucket.
             // child(): Returns a reference to a relative path from this reference.
@@ -16,13 +21,13 @@ const TweetFactory = ({userObject}) =>{
             // returns UploadTaskSnapshot if succeeded
             const response = await imgFileRef.putString(img, "data_url");
             // UploadTaskSnapshot.ref.getDownloadURL()
-            imgFfileUrl = await response.ref.getDownloadURL();
+            imgFileUrl = await response.ref.getDownloadURL();
         }
         const addTweet = {
             text: tweet,
             createdAt: Date.now(),
             creatorId: userObject.uid,
-            imgFfileUrl
+            imgFileUrl
         }
 
         await dbService.collection("tweets").add(addTweet);
@@ -54,15 +59,48 @@ const TweetFactory = ({userObject}) =>{
         setImg("");
     }
     return(
-        <form onSubmit={onSubmit}>
-            <input value={tweet} onChange={onChange} type="text" placeholder="Write your message" maxLength={120}/>
+        <form onSubmit={onSubmit} className="factoryForm">
+            <div className="factoryInput__container">
+                <input
+                className="factoryInput__input"
+                value={tweet}
+                onChange={onChange}
+                type="text"
+                placeholder="What's on your mind?"
+                maxLength={120}
+                />
+                <input type="submit" value="&rarr;" className="factoryInput__arrow" />
+            </div>
+            <label htmlFor="attach-file" className="factoryInput__label">
+                <span>Add photos</span>
+                <FontAwesomeIcon icon={faPlus} />
+            </label>
+            <input  id="attach-file"
+                    type="file"
+                    accept="image/*"
+                    onChange={onFileChange}
+                    style={{
+                    opacity: 0,
+                    }}
+            />
+            {/* <input value={tweet} onChange={onChange} type="text" placeholder="Write your message" maxLength={120}/>
             <input onChange={onFileChange} type="file" accept="image/*"/>
-            <input type="submit" value="Tweet"/>
-            {img && 
-                <div>
-                    <img src={img} width="100px" height="100px" alt="uploaded img" ></img>
-                    <button onClick={onClearPhoto}>Clear Photo</button>
-                </div>}
+            <input type="submit" value="Tweet"/> */}
+            {img && (
+                <div className="factoryForm__attachment">
+                    <img
+                        alt="attached file"
+                        src={img}
+                        style={{
+                        backgroundImage: img,
+                        }}
+                    />
+                    <div className="factoryForm__clear" onClick={onClearPhoto}>
+                        <span>Remove</span>
+                        <FontAwesomeIcon icon={faTimes} />
+                    </div>
+                </div>
+            )}
         </form>
     )
 }
