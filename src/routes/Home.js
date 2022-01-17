@@ -35,7 +35,7 @@ const Home = ({userObject}) => {
                 id: doc.id,
                 ...doc.data(),
             })); 
-            console.log(tweetArray);
+            // console.log(tweetArray);
             setTweets(tweetArray);
         })
     }, []);

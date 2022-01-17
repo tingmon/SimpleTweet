@@ -28,13 +28,15 @@ const TweetFactory = ({userObject}) =>{
             text: tweet,
             createdAt: Date.now(),
             creatorId: userObject.uid,
-            imgFileUrl
+            imgFileUrl,
+            creatorImgUrl: userObject.photoURL
         }
 
         await dbService.collection("tweets").add(addTweet);
         //clean the tweet after adding it.
         setTweet("");
         setImg("");
+        console.log(addTweet);
     }
 
     const onChange = (event) => {

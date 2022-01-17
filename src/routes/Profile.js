@@ -18,7 +18,8 @@ const Profile = ({userObject, refreshUser}) => {
     // to see only your tweets
     const getMyTweets = async() =>{
         const tweets = await dbService.collection("tweets").where("creatorId", "==", userObject.uid).orderBy("createdAt", "desc").get();
-        console.log(tweets.docs.map(doc => doc.data()));
+        console.log(tweets.docs.map(doc => doc.id));
+        console.log(tweets.docs.map(doc => doc.data().creatorImgUrl));
     }
 
     useEffect(() => {
@@ -31,13 +32,13 @@ const Profile = ({userObject, refreshUser}) => {
             await userObject.updateProfile({
                 displayName: newDisplayName,
             });
-            console.log(userObject)
+            // console.log(userObject)
             refreshUser();
         }
         if(userObject.photoURL !== newPhotoURL){
+            let imgFileUrl = "";
             try{
                 await storageService.refFromURL(userObject.photoURL).delete();
-                let imgFileUrl = "";
                 // ref(): Returns a reference for the given path in the default bucket.
                 // child(): Returns a reference to a relative path from this reference.
                 const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
@@ -52,7 +53,6 @@ const Profile = ({userObject, refreshUser}) => {
                 });
             }
             catch{
-                let imgFileUrl = "";
                 // ref(): Returns a reference for the given path in the default bucket.
                 // child(): Returns a reference to a relative path from this reference.
                 const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
@@ -66,12 +66,19 @@ const Profile = ({userObject, refreshUser}) => {
                     photoURL: imgFileUrl,
                 });
             }
-
-
-
             console.log(userObject)
             refreshUser();
+            //해당 if문의 경우 사진이 변경 되었으므로 유저의 프사정보를 트윗에도 함께 업데이트 해줘야함
+            //트윗 콜렉션 불러서 WHERE, MAP 써서 일일이 변경
+            const tweets = await dbService.collection("tweets").where("creatorId", "==", userObject.uid).orderBy("createdAt", "desc").get();
+            const appliedTweets = tweets.docs.map(doc => doc.id)
+            appliedTweets.forEach(element => {
+                dbService.doc(`tweets/${element}`).update({
+                    creatorImgUrl: imgFileUrl
+                })
+            });
         }
+        
         history.push("/");
     }
 

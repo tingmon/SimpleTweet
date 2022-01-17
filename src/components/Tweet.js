@@ -61,7 +61,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                 // UploadTaskSnapshot.ref.getDownloadURL()
                 imgFileUrl = await response.ref.getDownloadURL();
             }
-            console.log(tweetObject.text, newTweet);
+            // console.log(tweetObject.text, newTweet);
             // A DocumentReference refers to a document location in a Firestore database
             // go to your firestore, you can see the location
             // ex) /tweets/6x3GyJ3AnvvxmwsClP2t
@@ -79,9 +79,10 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
         setEditing(false);
         setSeeImage(false);
     }
-    console.log("is owner:" + isOwner);
-    console.log(userObject);
-    console.log(userObject.photoURL);
+    // console.log("is owner:" + isOwner);
+    // console.log(userObject);
+    // console.log(userObject.photoURL);
+    // console.log(tweetObject)
 
     return (
         <div className="nweet">
@@ -132,7 +133,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                 :
                 <>
                     <h4>{tweetObject.text}</h4>
-                    {userObject.photoURL && <img className="tweetProfileImage" alt="no file" src={userObject.photoURL} />}
+                    {tweetObject.creatorImgUrl && <img className="tweetProfileImage" alt="no file" src={tweetObject.creatorImgUrl} />}
                     {isOwner && (
                         <div className="nweet__actions">
                             <span onClick={onDeleteClick}>

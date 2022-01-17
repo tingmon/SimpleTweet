@@ -22,7 +22,7 @@ function App() {
           // check Profile.js if you want to see how this function works.
           updateProfile: (args) => user.updateProfile(args),
         });
-        console.log(userObject);
+        // console.log(userObject);
       }
       else{
         setUserObject(null);
