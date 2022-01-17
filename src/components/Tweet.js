@@ -9,6 +9,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
     const [newTweet, setNewTweet] = useState(tweetObject.text);
     const [seeImage, setSeeImage] = useState(false);
     const [img, setImg] = useState("");
+    const [editPhoto, setEditPhoto] = useState(false);
 
     const onDeleteClick = async () =>{
         const ok = window.confirm("Are you sure?");
@@ -34,6 +35,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
             const {currentTarget:{result}} = finishedEvent;
             setImg(result);
         }
+        setEditPhoto(true);
     }
 
     const toggleEditing = () => setEditing(prev => !prev);
@@ -47,27 +49,33 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
 
     const onSubmit = async (event) =>{
         event.preventDefault();
-        let imgFileUrl = "";
-        if(img !== ""){
-            // ref(): Returns a reference for the given path in the default bucket.
-            // child(): Returns a reference to a relative path from this reference.
-            const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
-            // putString(): Uploads string data to this reference's location.
-            // returns UploadTaskSnapshot if succeeded
-            const response = await imgFileRef.putString(img, "data_url");
-            // UploadTaskSnapshot.ref.getDownloadURL()
-            imgFileUrl = await response.ref.getDownloadURL();
+        if(editPhoto){
+            let imgFileUrl = "";
+            if(img !== ""){
+                // ref(): Returns a reference for the given path in the default bucket.
+                // child(): Returns a reference to a relative path from this reference.
+                const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
+                // putString(): Uploads string data to this reference's location.
+                // returns UploadTaskSnapshot if succeeded
+                const response = await imgFileRef.putString(img, "data_url");
+                // UploadTaskSnapshot.ref.getDownloadURL()
+                imgFileUrl = await response.ref.getDownloadURL();
+            }
+            console.log(tweetObject.text, newTweet);
+            // A DocumentReference refers to a document location in a Firestore database
+            // go to your firestore, you can see the location
+            // ex) /tweets/6x3GyJ3AnvvxmwsClP2t
+            dbService.doc(`tweets/${tweetObject.id}`).update({
+                text: newTweet,
+                imgFileUrl
+            });
         }
-        console.log(tweetObject.text, newTweet);
-        // A DocumentReference refers to a document location in a Firestore database
-        // go to your firestore, you can see the location
-        // ex) /tweets/6x3GyJ3AnvvxmwsClP2t
-        dbService.doc(`tweets/${tweetObject.id}`).update({
-            text: newTweet,
-            imgFileUrl
-        });
-
-
+        else{
+            dbService.doc(`tweets/${tweetObject.id}`).update({
+                text: newTweet,
+            });
+        }
+        setEditPhoto(false);
         setEditing(false);
         setSeeImage(false);
     }
@@ -117,14 +125,14 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                                     </>}
                         </div>
                         <span onClick={toggleImage} className="formBtn cancelBtn">
-                            Cancel
+                            Minimize
                         </span>
                     </>}
                 </> 
                 :
                 <>
                     <h4>{tweetObject.text}</h4>
-                    {userObject.photoURL && <img className="tweetProfileImage" alt="attached file" src={userObject.photoURL} />}
+                    {userObject.photoURL && <img className="tweetProfileImage" alt="no file" src={userObject.photoURL} />}
                     {isOwner && (
                         <div className="nweet__actions">
                             <span onClick={onDeleteClick}>

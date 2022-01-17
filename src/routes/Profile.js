@@ -35,19 +35,40 @@ const Profile = ({userObject, refreshUser}) => {
             refreshUser();
         }
         if(userObject.photoURL !== newPhotoURL){
-            let imgFileUrl = "";
-            // ref(): Returns a reference for the given path in the default bucket.
-            // child(): Returns a reference to a relative path from this reference.
-            const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
-            // putString(): Uploads string data to this reference's location.
-            // returns UploadTaskSnapshot if succeeded
-            const response = await imgFileRef.putString(newPhotoURL, "data_url");
-            // UploadTaskSnapshot.ref.getDownloadURL()
-            imgFileUrl = await response.ref.getDownloadURL();
+            try{
+                await storageService.refFromURL(userObject.photoURL).delete();
+                let imgFileUrl = "";
+                // ref(): Returns a reference for the given path in the default bucket.
+                // child(): Returns a reference to a relative path from this reference.
+                const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
+                // putString(): Uploads string data to this reference's location.
+                // returns UploadTaskSnapshot if succeeded
+                const response = await imgFileRef.putString(newPhotoURL, "data_url");
+                // UploadTaskSnapshot.ref.getDownloadURL()
+                imgFileUrl = await response.ref.getDownloadURL();
 
-            await userObject.updateProfile({
-                photoURL: imgFileUrl,
-            });
+                await userObject.updateProfile({
+                    photoURL: imgFileUrl,
+                });
+            }
+            catch{
+                let imgFileUrl = "";
+                // ref(): Returns a reference for the given path in the default bucket.
+                // child(): Returns a reference to a relative path from this reference.
+                const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
+                // putString(): Uploads string data to this reference's location.
+                // returns UploadTaskSnapshot if succeeded
+                const response = await imgFileRef.putString(newPhotoURL, "data_url");
+                // UploadTaskSnapshot.ref.getDownloadURL()
+                imgFileUrl = await response.ref.getDownloadURL();
+
+                await userObject.updateProfile({
+                    photoURL: imgFileUrl,
+                });
+            }
+
+
+
             console.log(userObject)
             refreshUser();
         }
