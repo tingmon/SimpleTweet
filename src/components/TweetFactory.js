@@ -23,6 +23,7 @@ const TweetFactory = ({userObject}) =>{
             // UploadTaskSnapshot.ref.getDownloadURL()
             imgFileUrl = await response.ref.getDownloadURL();
         }
+        
         const addTweet = {
             text: tweet,
             createdAt: Date.now(),

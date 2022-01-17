@@ -169,7 +169,7 @@ form {
 }
 
 .nweet {
-  margin-bottom: 20px;
+  margin-bottom: 35px;
   background-color: white;
   width: 100%;
   max-width: 320px;
@@ -185,7 +185,7 @@ form {
   font-size: 14px;
 }
 
-.nweet img {
+/* .nweet img {
   right: -10px;
   top: 20px;
   position: absolute;
@@ -193,6 +193,24 @@ form {
   width: 50px;
   height: 50px;
   margin-top: 10px;
+} */
+
+.tweetProfileImage{
+  right: -10px;
+  top: 20px;
+  position: absolute;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-top: 10px;
+}
+
+.tweetUploadedIamge{
+  width: 200px;
+  height: 250px;
+  margin-left: 45px;
+  margin-bottom: 10px;
+  position: relative;
 }
 
 .nweet__actions {
@@ -207,6 +225,10 @@ form {
 
 .nweet__actions span:first-child {
   margin-right: 10px;
+}
+
+.nweet__actions span:last-child {
+  margin-left: 10px;
 }
 
 /* Auth */

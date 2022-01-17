@@ -1,6 +1,9 @@
-import { authService, dbService } from "fbase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { authService, dbService, storageService } from "fbase";
 import react, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { v4 as uuidv4 } from "uuid";
 
 const Profile = ({userObject, refreshUser}) => {
     const history = useHistory();
@@ -32,12 +35,23 @@ const Profile = ({userObject, refreshUser}) => {
             refreshUser();
         }
         if(userObject.photoURL !== newPhotoURL){
+            let imgFileUrl = "";
+            // ref(): Returns a reference for the given path in the default bucket.
+            // child(): Returns a reference to a relative path from this reference.
+            const imgFileRef = storageService.ref().child(`${userObject.uid}/${uuidv4()}`);
+            // putString(): Uploads string data to this reference's location.
+            // returns UploadTaskSnapshot if succeeded
+            const response = await imgFileRef.putString(newPhotoURL, "data_url");
+            // UploadTaskSnapshot.ref.getDownloadURL()
+            imgFileUrl = await response.ref.getDownloadURL();
+
             await userObject.updateProfile({
-                displayName: newDisplayName,
+                photoURL: imgFileUrl,
             });
             console.log(userObject)
             refreshUser();
         }
+        history.push("/");
     }
 
     const onChange = (event) =>{
@@ -45,15 +59,34 @@ const Profile = ({userObject, refreshUser}) => {
         setNewDisplayName(value);
     }
     
+    const onFileChange = (event) =>{
+        const {target:{files}} = event;
+        const imgFile = files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(imgFile);
+        //This onloadend is triggered each time the reading operation is completed
+        reader.onloadend = (finishedEvent) =>{
+            const {currentTarget:{result}} = finishedEvent;
+            setNewPhotoURL(result);
+        }
+    }
+    
     return (
         <div className="container">
             <form onSubmit={onSubmit} className="profileForm">
                 <input onChange={onChange} type="text" placeholder="Change your name" value={newDisplayName} className="formInput" autoFocus/>
-                <input type="submit" value="Update user name" className="formBtn" style={{
-                    marginTop: 10,
-                }}/>
-                <input type="submit" value="Update profile photo" className="formBtn" style={{
-                    marginTop: 10,
+                <label style={{color: "#04aaff", marginTop:10}}>
+                    <span>Change profile photos</span>
+                </label>
+                <input
+                        type="file"
+                        accept="image/*"
+                        onChange={onFileChange}
+                        className="formBtn"
+                        style={{marginTop:10, height:27, paddingBottom:3}}
+                />
+                <input type="submit" value="Update user profile" className="formBtn" style={{
+                    marginTop: 10, marginBottom:10
                 }}/>
             </form>
             <span className="formBtn cancelBtn logOut" onClick={onLogOutClick}>

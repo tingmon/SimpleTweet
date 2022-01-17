@@ -17,6 +17,7 @@ function App() {
         setUserObject({
           displayName: user.displayName,
           uid: user.uid,
+          photoURL: user.photoURL,
           // inside user object, there is updateProfile function
           // check Profile.js if you want to see how this function works.
           updateProfile: (args) => user.updateProfile(args),
@@ -40,6 +41,7 @@ function App() {
     setUserObject({
       displayName: user.displayName,
       uid: user.uid,
+      photoURL: user.photoURL,
       updateProfile: (args) => user.updateProfile(args),
     });
   }
