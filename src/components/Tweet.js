@@ -112,7 +112,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                 :
                 seeImage ? 
                 <>
-                    {isOwner && <>
+                    {<>
                         {/* <form onSubmit={onSubmit} className="container nweetEdit">
                             <input onChange={onChange} type="text" value={newTweet} required autoFocus className="formInput"></input>
                             <input type="submit" value="Update Tweet" className="formBtn" />
@@ -122,7 +122,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                                     <img className="tweetUploadedIamge" src={tweetObject.imgFileUrl} alt="your uploaded one"/>
                                 : 
                                     <>
-                                        <span className="authError" style={{marginBottom:10, fontSize: 15}}>You didn't upload photo for this tweet</span>
+                                        <span className="authError" style={{marginBottom:10, fontSize: 15}}>User didn't upload photo for this tweet</span>
                                     </>}
                         </div>
                         <span onClick={toggleImage} className="formBtn cancelBtn">
@@ -134,7 +134,7 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                 <>
                     <h4>{tweetObject.text}</h4>
                     {tweetObject.creatorImgUrl && <img className="tweetProfileImage" alt="no file" src={tweetObject.creatorImgUrl} />}
-                    {isOwner && (
+                    {isOwner ? <>
                         <div className="nweet__actions">
                             <span onClick={onDeleteClick}>
                                 <FontAwesomeIcon icon={faTrash} />
@@ -146,7 +146,14 @@ const Tweet = ({userObject, tweetObject, isOwner}) => {
                                 <FontAwesomeIcon icon={faImage} />
                             </span>
                         </div>
-                    )}
+                    </> 
+                    : <>
+                        <div className="nweet__actions">
+                            <span onClick={toggleImage}>
+                                    <FontAwesomeIcon icon={faImage} />
+                            </span>
+                        </div>
+                    </>}
                 </>
             }
         </div>
