@@ -5,7 +5,8 @@ const AuthForm = () => {
 	const [error, setError] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [newAccount, setNewAccount] = useState(true);
+	const [newAccount, setNewAccount] = useState(false);
+	const [isRecruiter, setIsRecruiter] = useState(false);
 
 	const onChange = (event) => {
 		console.log(event.target.name);
@@ -31,6 +32,8 @@ const AuthForm = () => {
 					email,
 					password
 				);
+			} else if (isRecruiter) {
+				data = await authService.signInWithEmailAndPassword(email, password);
 			} else {
 				// login
 				data = await authService.signInWithEmailAndPassword(email, password);
@@ -41,6 +44,16 @@ const AuthForm = () => {
 		}
 	};
 	const toggleAccount = () => setNewAccount((prev) => !prev);
+
+	const toggleRecruiter = () => {
+		setIsRecruiter((prev) => !prev);
+		setEmail("test123@asdf.com");
+		setPassword("123456");
+		if (isRecruiter) {
+			alert("Recruiter Mode On! Click Sign In button.");
+		}
+	};
+
 	return (
 		<>
 			<form onSubmit={onSubmit} className="container">
@@ -71,6 +84,9 @@ const AuthForm = () => {
 			</form>
 			<span className="authSwitch" onClick={toggleAccount}>
 				{newAccount ? "I Have Account" : "I Don't Have Account"}
+			</span>
+			<span className="authSwitch" onClick={toggleRecruiter}>
+				{isRecruiter ? "Click Sign In Button" : "Click If You Are Recruiter"}
 			</span>
 		</>
 	);
